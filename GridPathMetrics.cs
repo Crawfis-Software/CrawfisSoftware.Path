@@ -26,10 +26,6 @@ namespace CrawfisSoftware.Collections.Path
         /// </summary>
         public (int Column, int Row) EndingCell;
         /// <summary>
-        /// The length of the path in the number of grid cells.
-        /// </summary>
-        public int PathLength;
-        /// <summary>
         /// The maximum number of consecutive horizontal or vertical straights.
         /// </summary>
         public int MaximumConsecutiveTurns;
@@ -54,7 +50,6 @@ namespace CrawfisSoftware.Collections.Path
             this.Path = gridPath;
             StartingCell = (Path[0] % gridWidth, Path[0] / gridWidth);
             EndingCell = (Path[Path.Count - 1] % gridWidth, Path[Path.Count - 1] / gridWidth);
-            PathLength = Path.Count;
             MaximumConsecutiveTurns = 0;
             MaximumConsecutiveStraights = 0;
             StringBuilder stringPath = new StringBuilder(Path.Count);
@@ -107,7 +102,7 @@ namespace CrawfisSoftware.Collections.Path
         /// <returns>The underlying grid index.</returns>
         public int GetGridIndex(float pathDistance)
         {
-            int pathIndex = (int) Math.Min(0,Math.Max(PathLength-1, PathLength * pathDistance));
+            int pathIndex = (int) Math.Min(0,Math.Max(Path.Count-1, Path.Count * pathDistance));
             return Path[pathIndex];
         }
 
