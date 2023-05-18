@@ -11,7 +11,7 @@ namespace CrawfisSoftware.Collections.Path
     /// </summary>
     public class GridPathMetrics<N,E>
     {
-        private int gridWidth;
+        private readonly int gridWidth; // for convience.
 
         /// <summary>
         /// The Path on which these metrics are based.
@@ -48,31 +48,12 @@ namespace CrawfisSoftware.Collections.Path
         {
             gridWidth = gridPath.Grid.Width;
             this.Path = gridPath;
+
+            TurtlePath = PathQuery.DetermineTurtleString<N,E>(Path);
             StartingCell = (Path[0] % gridWidth, Path[0] / gridWidth);
             EndingCell = (Path[Path.Count - 1] % gridWidth, Path[Path.Count - 1] / gridWidth);
-            MaximumConsecutiveTurns = 0;
-            MaximumConsecutiveStraights = 0;
-            StringBuilder stringPath = new StringBuilder(Path.Count);
-            int numberOfTurns = 0;
-            int numberOfStraights = 0;
-            for (int i = 1; i < Path.Count - 1; i++)
-            {
-                string token = DetermineCellDirectionAt(Path, gridWidth, i, false);
-                stringPath.Append(token);
-                if (token == StringPathQuery.Straight)
-                {
-                    numberOfTurns = 0;
-                    numberOfStraights++;
-                    MaximumConsecutiveStraights = (MaximumConsecutiveStraights >= numberOfStraights) ? MaximumConsecutiveStraights : numberOfStraights;
-                }
-                if (token == StringPathQuery.Left || token == StringPathQuery.Right)
-                {
-                    numberOfStraights = 0;
-                    numberOfTurns++;
-                    MaximumConsecutiveTurns = (MaximumConsecutiveTurns >= numberOfTurns) ? MaximumConsecutiveTurns : numberOfTurns;
-                }
-            }
-            TurtlePath = stringPath.ToString();
+            MaximumConsecutiveTurns = StringPathQuery.MaximumConsecutiveStraights(TurtlePath);
+            MaximumConsecutiveStraights = StringPathQuery.MaximumConsecutiveTurns(TurtlePath);
         }
 
         /// <summary>
@@ -121,39 +102,6 @@ namespace CrawfisSoftware.Collections.Path
                 int cellIndex = Path[stringIndex];
                 yield return cellIndex;
             }
-        }
-
-        /// <summary>
-        /// Utility function to determine whether a path goes straight (S) or turns left (L) or right (R).
-        /// </summary>
-        /// <param name="pathCells"></param>
-        /// <param name="gridWidth"></param>
-        /// <param name="gridCellIndex"></param>
-        /// <param name="isLoop"></param>
-        /// <returns></returns>
-        public static string DetermineCellDirectionAt(IReadOnlyList<int> pathCells, int gridWidth, int gridCellIndex, bool isLoop = false)
-        {
-            int priorIndex = gridCellIndex - 1;
-            int nextindex = gridCellIndex + 1;
-            if(isLoop && priorIndex < 0) priorIndex = pathCells.Count - 1;
-            if (isLoop && nextindex >= pathCells.Count) nextindex = 0;
-            Direction cellDirection = DirectionExtensions.GetEdgeDirection(pathCells[priorIndex], pathCells[gridCellIndex], gridWidth);
-            cellDirection |= DirectionExtensions.GetEdgeDirection(pathCells[nextindex], pathCells[gridCellIndex], gridWidth);
-            if (cellDirection.IsStraight())
-            {
-                return StringPathQuery.Straight;
-            }
-            if (cellDirection.IsTurn())
-            {
-                // Building a little logic table of (i-1)->i versus i->i+1 yeilds this.
-                int deltai = pathCells[gridCellIndex] - pathCells[priorIndex];
-                int deltaii = pathCells[nextindex] - pathCells[gridCellIndex];
-                int testValue = (Math.Abs(deltai) - 2) * deltai * deltaii;
-                if (testValue < 0)
-                    return StringPathQuery.Left;
-                return StringPathQuery.Right;
-            }
-            return StringPathQuery.InvalidChar.ToString();
         }
     }
 }

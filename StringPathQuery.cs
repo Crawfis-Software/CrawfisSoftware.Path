@@ -5,15 +5,27 @@ using System.Text.RegularExpressions;
 
 namespace CrawfisSoftware.Collections.Path
 {
+    /// <summary>
+    /// Static utility for querying a path or loop as an encoded turtle-based string.
+    /// </summary>
     public static class StringPathQuery
     {
+        /// <summary>
+        /// The character that indicates: Go Straight (defaults to 'S').
+        /// </summary>
         public static char StraightChar = 'S';
+        /// <summary>
+        /// The character that indicates: Go Left (defaults to 'L').
+        /// </summary>
         public static char LeftChar = 'L';
+        /// <summary>
+        /// The character that indicates: Go Right (defaults to 'R').
+        /// </summary>
         public static char RightChar = 'R';
+        /// <summary>
+        /// A character that indicates the path is disconnect here or invalid (defaults to 'X').
+        /// </summary>
         public static char InvalidChar = 'X';
-        public static string Straight { get { return StringPathQuery.StraightChar.ToString(); } }
-        public static string Left { get { return LeftChar.ToString(); } }
-        public static string Right { get { return StringPathQuery.RightChar.ToString(); } }
 
         /// <summary>
         /// Searches the path (expressed as an input string) for the regular expression and returns the starting string index for each instance it encounters.
@@ -41,7 +53,7 @@ namespace CrawfisSoftware.Collections.Path
         /// <seealso cref="Search(Regex)"/>
         public static IEnumerable<int> UTurns(string pathString)
         {
-            string pattern = "(" + Right + Right + "|" + Left + Left + ")";
+            string pattern = "(" + RightChar + RightChar + "|" + LeftChar + LeftChar + ")";
             Regex regex = new Regex(pattern, RegexOptions.Compiled);
             return SearchPathString(pathString, regex);
         }
@@ -61,7 +73,7 @@ namespace CrawfisSoftware.Collections.Path
             //return Search(regex);
             StringBuilder minStraightsSequence = new StringBuilder();
             for (int i = 0; i < straightLength; i++)
-                minStraightsSequence.Append(StringPathQuery.Straight);
+                minStraightsSequence.Append(StringPathQuery.StraightChar);
             string subString = pathString;
             int stringIndex = subString.IndexOf(minStraightsSequence.ToString());
             int turtleIndex = 0;
@@ -98,6 +110,44 @@ namespace CrawfisSoftware.Collections.Path
                 else numberOfTurns++;
             }
             return (float)numberOfStraights / (float)windowSize;
+        }
+
+        /// <summary>
+        /// Calculate the number of consecutive straights.
+        /// </summary>
+        /// <param name="pathString">The turtle string of straight, left and right movements.</param>
+        public static int MaximumConsecutiveStraights(string pathString)
+        {
+            int maxConsecutiveStraights = 0;
+            int numberOfStraights = 0;
+            foreach (char token in pathString)
+            {
+                if (token == StringPathQuery.StraightChar)
+                {
+                    numberOfStraights++;
+                    maxConsecutiveStraights = (maxConsecutiveStraights >= numberOfStraights) ? maxConsecutiveStraights : numberOfStraights;
+                }
+            }
+            return maxConsecutiveStraights;
+        }
+
+        /// <summary>
+        /// Calculate the number of Consecutive turns (left or right).
+        /// </summary>
+        /// <param name="pathString">The turtle string of straight, left and right movements.</param>
+        public static int MaximumConsecutiveTurns(string pathString)
+        {
+            int maxConsecutiveTurns = 0;
+            int numberOfTurns = 0;
+            foreach (char token in pathString)
+            {
+                if (token == StringPathQuery.LeftChar || token == StringPathQuery.RightChar)
+                {
+                    numberOfTurns++;
+                    maxConsecutiveTurns = (maxConsecutiveTurns >= numberOfTurns) ? maxConsecutiveTurns : numberOfTurns;
+                }
+            }
+            return maxConsecutiveTurns;
         }
     }
 }

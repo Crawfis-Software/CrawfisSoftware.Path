@@ -6,29 +6,19 @@ namespace CrawfisSoftware.Collections.Path
     /// <summary>
     /// Data structure to hold loop metrics on a grid.
     /// </summary>
-    public class GridLoopMetrics
+    public class GridLoopMetrics<N,E>
     {
+        private readonly int gridWidth; // for convience.
         private int _currentStartingCell;
+        private GridPath<N, E> _originalPath;
         /// <summary>
-        /// A list of the grid cell indices that the path passes through.
+        /// The Path on which these metrics are based.
         /// </summary>
-        public List<int> PathGridCellIndices;
-        /// <summary>
-        /// The underlying grid width in terms of the number of columns.
-        /// </summary>
-        public int GridWidth;
+        public GridPath<N, E> Path { get; private set; }
         /// <summary>
         /// A (Column, Row) value tuple of the starting cell.
         /// </summary>
         public (int Column, int Row) StartingCell;
-        /// <summary>
-        /// A (Column, Row) value tuple of the ending cell.
-        /// </summary>
-        public (int Column, int Row) EndingCell;
-        /// <summary>
-        /// The length of the path in the number of grid cells.
-        /// </summary>
-        public int PathLength;
         /// <summary>
         /// The maximum number of consecutive horizontal or vertical straights.
         /// </summary>
@@ -47,17 +37,16 @@ namespace CrawfisSoftware.Collections.Path
         /// <summary>
         /// Constructor.
         /// </summary>
-        /// <param name="pathIndices">The path defined as a sequence of grid cells on a grid with the given width.</param>
-        /// <param name="gridWidth">The width of the grid.</param>
+        /// <param name="gridPath">A GridPath.</param>
         /// <param name="startingCellPathIndex">An index into the pathIndices that is the desired "starting" point for the loop. Useful for the string based representation.</param>
-        public GridLoopMetrics(List<int> pathIndices, int gridWidth, int startingCellPathIndex = 0)
+        public GridLoopMetrics(GridPath<N, E> gridPath, int startingCellPathIndex = 0)
         {
-            this.PathGridCellIndices = pathIndices;
-            this.GridWidth = gridWidth;
-            StartingCell = (pathIndices[0] % gridWidth, pathIndices[0] / gridWidth);
-            EndingCell = (pathIndices[pathIndices.Count - 1] % gridWidth, pathIndices[pathIndices.Count - 1] / gridWidth);
-            PathLength = pathIndices.Count + 1;
+            gridWidth = gridPath.Grid.Width;
+            _originalPath = gridPath;
+            Path = _originalPath;
             SetStartingCell(startingCellPathIndex);
+            MaximumConsecutiveTurns = StringPathQuery.MaximumConsecutiveStraights(TurtlePath);
+            MaximumConsecutiveStraights = StringPathQuery.MaximumConsecutiveTurns(TurtlePath);
         }
 
         /// <summary>
@@ -67,41 +56,26 @@ namespace CrawfisSoftware.Collections.Path
         public void SetLoopStartingPathIndex(int index)
         {
             SetStartingCell(index);
+            StartingCell = (Path[0] % gridWidth, Path[0] / gridWidth);
             _currentStartingCell = index;
         }
 
         private void SetStartingCell(int newStartingPathIndex)
         {
-            MaximumConsecutiveTurns = 0;
-            MaximumConsecutiveStraights = 0;
-            StringBuilder path = new StringBuilder(PathGridCellIndices.Count);
-            int numberOfTurns = 0;
-            int numberOfStraights = 0;
-            var loopCellIndices = new List<int>(PathGridCellIndices.Count + 2);
-            loopCellIndices.Add(PathGridCellIndices[PathGridCellIndices.Count-1]);
-            foreach (int index in PathGridCellIndices)
+            var loopCellIndices = new List<int>(_originalPath.Count + 2);
+            loopCellIndices.Add(_originalPath[newStartingPathIndex]);
+            int index = newStartingPathIndex + 1;
+            for (int i = 1; i < _originalPath.Count; i++)
             {
-                loopCellIndices.Add(index);
+                if (index >= _originalPath.Count) index = 0;
+                loopCellIndices.Add(_originalPath[index]);
+                index++;
             }
-            loopCellIndices.Add(PathGridCellIndices[0]);
-            for (int i = 1; i < loopCellIndices.Count - 1; i++)
-            {
-                string token = GridPathMetrics<int,int>.DetermineCellDirectionAt(loopCellIndices, GridWidth, i, false);
-                path.Append(token);
-                if (token == StringPathQuery.Straight)
-                {
-                    numberOfTurns = 0;
-                    numberOfStraights++;
-                    MaximumConsecutiveStraights = (MaximumConsecutiveStraights >= numberOfStraights) ? MaximumConsecutiveStraights : numberOfStraights;
-                }
-                if (token == StringPathQuery.Left || token == StringPathQuery.Right)
-                {
-                    numberOfStraights = 0;
-                    numberOfTurns++;
-                    MaximumConsecutiveTurns = (MaximumConsecutiveTurns >= numberOfTurns) ? MaximumConsecutiveTurns : numberOfTurns;
-                }
-            }
-            TurtlePath = path.ToString();
+            //if (index >= _originalPath.Count) index = 0;
+            //loopCellIndices.Add(_originalPath[index]);
+            Path = new GridPath<N, E>(_originalPath.Grid, loopCellIndices, _originalPath.PathLength, true);
+
+            TurtlePath = PathQuery.DetermineTurtleString(Path);
         }
     }
 }
