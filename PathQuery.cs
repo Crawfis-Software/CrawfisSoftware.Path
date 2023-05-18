@@ -11,6 +11,7 @@ namespace CrawfisSoftware.Collections.Path
     /// </summary>
     public static class PathQuery
     {
+        // Todo: Add support for Toroidal grids - AKA make sure to use the grid for any direction choices.
         /// <summary>
         /// Utility function to determine whether a path goes straight (S) or turns left (L) or right (R).
         /// </summary>
@@ -18,6 +19,7 @@ namespace CrawfisSoftware.Collections.Path
         /// <param name="positionIndex">The position index of the path which we are querying the cell direction.</param>
         /// <param name="isLoop">True is the path forms a closed loop.</param>
         /// <returns>A character respresenting the turtle action.</returns>
+        /// <remarks>Does not support toriodal grids.</remarks>
         public static char DetermineCellDirectionAt<N,E>(GridPath<N,E> path, int positionIndex, bool isLoop = false)
         {
             int priorIndex = positionIndex - 1;
@@ -53,7 +55,14 @@ namespace CrawfisSoftware.Collections.Path
         public static string DetermineTurtleString<N, E>(GridPath<N, E> path)
         {
             StringBuilder stringPath = new StringBuilder(path.Count);
-            for (int i = 1; i < path.Count - 1; i++)
+            int startIndex = 1;
+            int endIndex = path.Count - 1;
+            if(path.IsClosed)
+            {
+                startIndex = 0;
+                endIndex = path.Count;
+            }
+            for (int i = startIndex; i < endIndex; i++)
             {
                 char token = PathQuery.DetermineCellDirectionAt<N, E>(path, i, path.IsClosed);
                 stringPath.Append(token);

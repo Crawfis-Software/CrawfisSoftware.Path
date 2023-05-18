@@ -65,7 +65,7 @@ namespace CrawfisSoftware.Collections.Path
             var loopCellIndices = new List<int>(_originalPath.Count + 2);
             loopCellIndices.Add(_originalPath[newStartingPathIndex]);
             int index = newStartingPathIndex + 1;
-            for (int i = 1; i < _originalPath.Count; i++)
+            for (int i = 0; i < _originalPath.Count - 1; i++)
             {
                 if (index >= _originalPath.Count) index = 0;
                 loopCellIndices.Add(_originalPath[index]);
