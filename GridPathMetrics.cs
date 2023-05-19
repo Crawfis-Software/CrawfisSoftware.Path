@@ -16,7 +16,7 @@ namespace CrawfisSoftware.Collections.Path
         /// <summary>
         /// The Path on which these metrics are based.
         /// </summary>
-        public GridPath<N,E> Path { get; private set; }
+        public GridPath<N,E> Path { get; protected set; }
         /// <summary>
         /// A (Column, Row) value tuple of the starting cell.
         /// </summary>
@@ -52,8 +52,8 @@ namespace CrawfisSoftware.Collections.Path
             TurtlePath = PathQuery.DetermineTurtleString<N,E>(Path);
             StartingCell = (Path[0] % gridWidth, Path[0] / gridWidth);
             EndingCell = (Path[Path.Count - 1] % gridWidth, Path[Path.Count - 1] / gridWidth);
-            MaximumConsecutiveTurns = StringPathQuery.MaximumConsecutiveStraights(TurtlePath);
-            MaximumConsecutiveStraights = StringPathQuery.MaximumConsecutiveTurns(TurtlePath);
+            MaximumConsecutiveStraights = StringPathQuery.MaximumConsecutiveStraights(TurtlePath, gridPath.IsClosed);
+            MaximumConsecutiveTurns = StringPathQuery.MaximumConsecutiveTurns(TurtlePath, gridPath.IsClosed);
         }
 
         /// <summary>
@@ -85,23 +85,6 @@ namespace CrawfisSoftware.Collections.Path
         {
             int pathIndex = (int) Math.Min(0,Math.Max(Path.Count-1, Path.Count * pathDistance));
             return Path[pathIndex];
-        }
-
-        /// <summary>
-        /// Searches the path (expressed as an input string) for the regular expression and returns the starting cell for each instance it encounters.
-        /// </summary>
-        /// <param name="pathString">The turtle string of straight, left and right movements.</param>
-        /// <param name="regex">A Regular Expression in the System.Text.RegularExpression.Regex format.</param>
-        /// <param name="isClosed">True if the string represents a loop. Default is false.</param>
-        /// <returns>The starting index for the pattern for each occurance.</returns>
-        /// <remarks>Note that the pattern usually starts at the cell before. For instance a left turn that starts at i-1, goes through i to i+width, will return i-1, not i.</remarks>
-        public IEnumerable<int> GetGridIndicesWhere(string pathString, Regex regex, bool isClosed = false)
-        {
-            foreach (int stringIndex in StringPathQuery.SearchPathString(pathString, regex, isClosed))
-            {
-                int cellIndex = Path[stringIndex];
-                yield return cellIndex;
-            }
         }
     }
 }

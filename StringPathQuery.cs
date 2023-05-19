@@ -37,7 +37,9 @@ namespace CrawfisSoftware.Collections.Path
         /// <remarks>Note that the pattern usually starts at the cell before. For instance a left turn that starts at i-1, goes through i to i+width, will return i-1, not i.</remarks>
         public static IEnumerable<int> SearchPathString(string pathString, Regex regex, bool isClosed = false)
         {
-            var matches = regex.Matches(pathString);
+            string searchString = pathString;
+            if (isClosed) searchString += pathString[0];
+            var matches = regex.Matches(searchString);
             foreach (Match match in matches)
             {
                 yield return match.Index;
@@ -48,14 +50,15 @@ namespace CrawfisSoftware.Collections.Path
         /// Enumerates all of the U-turns in TurtlePath string (aka, all "RR" and "LL" substrings).
         /// </summary>
         /// <param name="pathString">The turtle string of straight, left and right movements.</param>
+        /// <param name="isClosed">True if the string represents a loop. Default is false.</param>
         /// <returns>The starting index for the pattern for each occurance.</returns>
         /// <remarks>Note that the pattern usually starts at the cell before. For instance a left turn that starts at i-1, goes through i to i+width, will return i-1, not i.</remarks>
         /// <seealso cref="Search(Regex)"/>
-        public static IEnumerable<int> UTurns(string pathString)
+        public static IEnumerable<int> UTurns(string pathString, bool isClosed = false)
         {
             string pattern = "(" + RightChar + RightChar + "|" + LeftChar + LeftChar + ")";
             Regex regex = new Regex(pattern, RegexOptions.Compiled);
-            return SearchPathString(pathString, regex);
+            return SearchPathString(pathString, regex, isClosed);
         }
 
         /// <summary>
@@ -63,10 +66,11 @@ namespace CrawfisSoftware.Collections.Path
         /// </summary>
         /// <param name="pathString">The turtle string of straight, left and right movements.</param>
         /// <param name="straightLength">The desired straight-away length to match.</param>
+        /// <param name="isClosed">True if the string represents a loop. Default is false.</param>
         /// <returns>The starting index for the pattern for each occurance.</returns>
         /// <remarks>Note that the pattern usually starts at the cell before. For instance a left turn that starts at i-1, goes through i to i+width, will return i-1, not i.</remarks>
         /// <seealso cref="Search(Regex)"/>
-        public static IEnumerable<int> StraightAways(string pathString, int straightLength)
+        public static IEnumerable<int> StraightAways(string pathString, int straightLength, bool isClosed = false)
         {
             //string pattern = "S{" + straightLength + "}";
             //Regex regex = new Regex(pattern, RegexOptions.Compiled);
@@ -75,6 +79,7 @@ namespace CrawfisSoftware.Collections.Path
             for (int i = 0; i < straightLength; i++)
                 minStraightsSequence.Append(StringPathQuery.StraightChar);
             string subString = pathString;
+            if (isClosed) subString += pathString[0];
             int stringIndex = subString.IndexOf(minStraightsSequence.ToString());
             int turtleIndex = 0;
             while (stringIndex >= 0)
@@ -93,20 +98,23 @@ namespace CrawfisSoftware.Collections.Path
         /// <param name="pathString">The turtle string of straight, left and right movements.</param>
         /// <param name="pathIndex">The index into the List of grid cells that define the path, not a grid index itself.</param>
         /// <param name="halfWindowSize">The half window size to use in the analysis.</param>
+        /// <param name="isClosed">True if the string represents a loop. Default is false.</param>
         /// <returns>A float from 0 to 1 representing the ratio of straights to turns with the window centered at the path location. 
         /// Note, if the window exceeds the path it is cropped to the valid region. If the resulting window size is less than one, a -1 is returned.</returns>
-        public static float SpeedAgilityRatio(string pathString, int pathIndex, int halfWindowSize = 2)
+        public static float SpeedAgilityRatio(string pathString, int pathIndex, int halfWindowSize = 2, bool isClosed = false)
         {
             int numberOfStraights = 0;
             int numberOfTurns = 0;
+            string searchString = pathString;
+            if (isClosed) searchString += pathString[0];
             int startIndex = Math.Max(0, pathIndex - halfWindowSize);
-            int endIndex = Math.Min(pathIndex + halfWindowSize, pathString.Length - 2);
+            int endIndex = Math.Min(pathIndex + halfWindowSize, searchString.Length - 2);
             int windowSize = endIndex - startIndex + 1;
-            if (windowSize == 1) return pathString[startIndex] == StringPathQuery.StraightChar ? 1 : 0;
+            if (windowSize == 1) return searchString[startIndex] == StringPathQuery.StraightChar ? 1 : 0;
             if (windowSize <= 0) return -1;
             for (int i = startIndex; i <= endIndex; i++)
             {
-                if (pathString[i] == StringPathQuery.StraightChar) numberOfStraights++;
+                if (searchString[i] == StringPathQuery.StraightChar) numberOfStraights++;
                 else numberOfTurns++;
             }
             return (float)numberOfStraights / (float)windowSize;
@@ -116,16 +124,24 @@ namespace CrawfisSoftware.Collections.Path
         /// Calculate the number of consecutive straights.
         /// </summary>
         /// <param name="pathString">The turtle string of straight, left and right movements.</param>
-        public static int MaximumConsecutiveStraights(string pathString)
+        /// <param name="isClosed">True if the string represents a loop. Default is false.</param>
+        /// <returns>The maximum number of straights in the turtle string.</returns>
+        public static int MaximumConsecutiveStraights(string pathString, bool isClosed = false)
         {
             int maxConsecutiveStraights = 0;
             int numberOfStraights = 0;
-            foreach (char token in pathString)
+            string searchString = pathString;
+            if (isClosed) searchString += pathString;
+            foreach (char token in searchString)
             {
                 if (token == StringPathQuery.StraightChar)
                 {
                     numberOfStraights++;
                     maxConsecutiveStraights = (maxConsecutiveStraights >= numberOfStraights) ? maxConsecutiveStraights : numberOfStraights;
+                }
+                else
+                {
+                    numberOfStraights = 0;
                 }
             }
             return maxConsecutiveStraights;
@@ -135,16 +151,24 @@ namespace CrawfisSoftware.Collections.Path
         /// Calculate the number of Consecutive turns (left or right).
         /// </summary>
         /// <param name="pathString">The turtle string of straight, left and right movements.</param>
-        public static int MaximumConsecutiveTurns(string pathString)
+        /// <param name="isClosed">True if the string represents a loop. Default is false.</param>
+        /// <returns>The maximum number of turns in the turtle string.</returns>
+        public static int MaximumConsecutiveTurns(string pathString, bool isClosed = false)
         {
             int maxConsecutiveTurns = 0;
             int numberOfTurns = 0;
-            foreach (char token in pathString)
+            string searchString = pathString;
+            if (isClosed) searchString += pathString;
+            foreach (char token in searchString)
             {
                 if (token == StringPathQuery.LeftChar || token == StringPathQuery.RightChar)
                 {
                     numberOfTurns++;
                     maxConsecutiveTurns = (maxConsecutiveTurns >= numberOfTurns) ? maxConsecutiveTurns : numberOfTurns;
+                }
+                else
+                {
+                    numberOfTurns = 0;
                 }
             }
             return maxConsecutiveTurns;

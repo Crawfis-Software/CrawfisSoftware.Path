@@ -6,47 +6,46 @@ namespace CrawfisSoftware.Collections.Path
     /// <summary>
     /// Data structure to hold loop metrics on a grid.
     /// </summary>
-    public class GridLoopMetrics<N,E>
+    public class GridLoopMetrics<N,E> : GridPathMetrics<N,E>
     {
         private readonly int gridWidth; // for convience.
         private int _currentStartingCell;
         private GridPath<N, E> _originalPath;
-        /// <summary>
-        /// The Path on which these metrics are based.
-        /// </summary>
-        public GridPath<N, E> Path { get; private set; }
-        /// <summary>
-        /// A (Column, Row) value tuple of the starting cell.
-        /// </summary>
-        public (int Column, int Row) StartingCell;
-        /// <summary>
-        /// The maximum number of consecutive horizontal or vertical straights.
-        /// </summary>
-        public int MaximumConsecutiveTurns;
-        /// <summary>
-        /// The maximum number of consecutive turns (left or right).
-        /// </summary>
-        public int MaximumConsecutiveStraights;
-        /// <summary>
-        /// A string representing the path movements where S implies go straight, L implies go left, and R implies go right. This can be easily searched for patterns.
-        /// </summary>
-        /// <remarks>The string path is 2 characters shorter than the path length due to the start and end cells considered as dead-ends.</remarks>
-        /// <seealso cref="System.Text.RegularExpressions"/>
-        public string TurtlePath = "";
+        ///// <summary>
+        ///// The Path on which these metrics are based.
+        ///// </summary>
+        //public GridPath<N, E> Path { get; private set; }
+        ///// <summary>
+        ///// A (Column, Row) value tuple of the starting cell.
+        ///// </summary>
+        //public (int Column, int Row) StartingCell;
+        ///// <summary>
+        ///// The maximum number of consecutive horizontal or vertical straights.
+        ///// </summary>
+        //public int MaximumConsecutiveTurns;
+        ///// <summary>
+        ///// The maximum number of consecutive turns (left or right).
+        ///// </summary>
+        //public int MaximumConsecutiveStraights;
+        ///// <summary>
+        ///// A string representing the path movements where S implies go straight, L implies go left, and R implies go right. This can be easily searched for patterns.
+        ///// </summary>
+        ///// <remarks>The string path is 2 characters shorter than the path length due to the start and end cells considered as dead-ends.</remarks>
+        ///// <seealso cref="System.Text.RegularExpressions"/>
+        //public string TurtlePath = "";
 
         /// <summary>
         /// Constructor.
         /// </summary>
         /// <param name="gridPath">A GridPath.</param>
         /// <param name="startingCellPathIndex">An index into the pathIndices that is the desired "starting" point for the loop. Useful for the string based representation.</param>
-        public GridLoopMetrics(GridPath<N, E> gridPath, int startingCellPathIndex = 0)
+        public GridLoopMetrics(GridPath<N, E> gridPath, int startingCellPathIndex = 0) : base(gridPath)
         {
             gridWidth = gridPath.Grid.Width;
             _originalPath = gridPath;
-            Path = _originalPath;
             SetStartingCell(startingCellPathIndex);
-            MaximumConsecutiveTurns = StringPathQuery.MaximumConsecutiveStraights(TurtlePath);
-            MaximumConsecutiveStraights = StringPathQuery.MaximumConsecutiveTurns(TurtlePath);
+            //MaximumConsecutiveTurns = StringPathQuery.MaximumConsecutiveStraights(TurtlePath);
+            //MaximumConsecutiveStraights = StringPathQuery.MaximumConsecutiveTurns(TurtlePath);
         }
 
         /// <summary>
