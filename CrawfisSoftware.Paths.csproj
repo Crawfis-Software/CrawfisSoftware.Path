@@ -5,7 +5,7 @@
     <Nullable>enable</Nullable>
     <RootNamespace>CrawfisSoftware.Paths</RootNamespace>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
-    <DocumentationFile>$(SolutionDir)Documentation\Paths.xml</DocumentationFile>
+    <DocumentationFile>$(SolutionDir)Documentation\CrawfisSoftware.Paths.xml</DocumentationFile>
     <BaseOutputPath>$(SolutionDir)\bin\</BaseOutputPath>
     <AssemblyName>CrawfisSoftware.$(MSBuildProjectName)</AssemblyName>
   </PropertyGroup>
