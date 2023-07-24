@@ -7,7 +7,7 @@
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <DocumentationFile>$(SolutionDir)Documentation\CrawfisSoftware.Paths.xml</DocumentationFile>
     <BaseOutputPath>$(SolutionDir)\bin\</BaseOutputPath>
-    <AssemblyName>CrawfisSoftware.$(MSBuildProjectName)</AssemblyName>
+    <AssemblyName>$(MSBuildProjectName)</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>
