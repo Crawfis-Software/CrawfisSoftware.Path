@@ -8,7 +8,7 @@ namespace CrawfisSoftware.Collections.Path
     /// </summary>
     public class GridLoopMetrics<N,E> : GridPathMetrics<N,E>
     {
-        private readonly int gridWidth; // for convience.
+        private readonly int gridWidth; // for convenience.
         private int _currentStartingCell;
         private GridPath<N, E> _originalPath;
         ///// <summary>
@@ -31,7 +31,7 @@ namespace CrawfisSoftware.Collections.Path
         ///// A string representing the path movements where S implies go straight, L implies go left, and R implies go right. This can be easily searched for patterns.
         ///// </summary>
         ///// <remarks>The string path is 2 characters shorter than the path length due to the start and end cells considered as dead-ends.</remarks>
-        ///// <seealso cref="System.Text.RegularExpressions"/>
+        ///// <see cref="System.Text.RegularExpressions"/>
         //public string TurtlePath = "";
 
         /// <summary>

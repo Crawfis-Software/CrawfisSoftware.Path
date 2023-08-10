@@ -11,7 +11,7 @@ namespace CrawfisSoftware.Collections.Path
     /// </summary>
     public class GridPathMetrics<N,E>
     {
-        private readonly int gridWidth; // for convience.
+        private readonly int gridWidth; // for convenience.
 
         /// <summary>
         /// The Path on which these metrics are based.

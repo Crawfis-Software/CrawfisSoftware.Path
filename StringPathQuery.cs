@@ -33,7 +33,7 @@ namespace CrawfisSoftware.Collections.Path
         /// <param name="pathString">The turtle string of straight, left and right movements.</param>
         /// <param name="regex">A Regular Expression in the System.Text.RegularExpression.Regex format.</param>
         /// <param name="isClosed">True if the string represents a loop. Default is false.</param>
-        /// <returns>The starting index for the pattern for each occurance.</returns>
+        /// <returns>The starting index for the pattern for each occurrence.</returns>
         /// <remarks>Note that the pattern usually starts at the cell before. For instance a left turn that starts at i-1, goes through i to i+width, will return i-1, not i.</remarks>
         public static IEnumerable<int> SearchPathString(string pathString, Regex regex, bool isClosed = false)
         {
@@ -51,7 +51,7 @@ namespace CrawfisSoftware.Collections.Path
         /// </summary>
         /// <param name="pathString">The turtle string of straight, left and right movements.</param>
         /// <param name="isClosed">True if the string represents a loop. Default is false.</param>
-        /// <returns>The starting index for the pattern for each occurance.</returns>
+        /// <returns>The starting index for the pattern for each occurrence.</returns>
         /// <remarks>Note that the pattern usually starts at the cell before. For instance a left turn that starts at i-1, goes through i to i+width, will return i-1, not i.</remarks>
         /// <seealso cref="Search(Regex)"/>
         public static IEnumerable<int> UTurns(string pathString, bool isClosed = false)
@@ -67,7 +67,7 @@ namespace CrawfisSoftware.Collections.Path
         /// <param name="pathString">The turtle string of straight, left and right movements.</param>
         /// <param name="straightLength">The desired straight-away length to match.</param>
         /// <param name="isClosed">True if the string represents a loop. Default is false.</param>
-        /// <returns>The starting index for the pattern for each occurance.</returns>
+        /// <returns>The starting index for the pattern for each occurrence.</returns>
         /// <remarks>Note that the pattern usually starts at the cell before. For instance a left turn that starts at i-1, goes through i to i+width, will return i-1, not i.</remarks>
         /// <seealso cref="Search(Regex)"/>
         public static IEnumerable<int> StraightAways(string pathString, int straightLength, bool isClosed = false)
