@@ -1,38 +1,15 @@
 ﻿using System.Collections.Generic;
-using System.Text;
 
 namespace CrawfisSoftware.Collections.Path
 {
     /// <summary>
     /// Data structure to hold loop metrics on a grid.
     /// </summary>
-    public class GridLoopMetrics<N,E> : GridPathMetrics<N,E>
+    public class GridLoopMetrics<N, E> : GridPathMetrics<N, E>
     {
         private readonly int gridWidth; // for convenience.
         private int _currentStartingCell;
         private GridPath<N, E> _originalPath;
-        ///// <summary>
-        ///// The Path on which these metrics are based.
-        ///// </summary>
-        //public GridPath<N, E> Path { get; private set; }
-        ///// <summary>
-        ///// A (Column, Row) value tuple of the starting cell.
-        ///// </summary>
-        //public (int Column, int Row) StartingCell;
-        ///// <summary>
-        ///// The maximum number of consecutive horizontal or vertical straights.
-        ///// </summary>
-        //public int MaximumConsecutiveTurns;
-        ///// <summary>
-        ///// The maximum number of consecutive turns (left or right).
-        ///// </summary>
-        //public int MaximumConsecutiveStraights;
-        ///// <summary>
-        ///// A string representing the path movements where S implies go straight, L implies go left, and R implies go right. This can be easily searched for patterns.
-        ///// </summary>
-        ///// <remarks>The string path is 2 characters shorter than the path length due to the start and end cells considered as dead-ends.</remarks>
-        ///// <see cref="System.Text.RegularExpressions"/>
-        //public string TurtlePath = "";
 
         /// <summary>
         /// Constructor.
@@ -44,8 +21,6 @@ namespace CrawfisSoftware.Collections.Path
             gridWidth = gridPath.Grid.Width;
             _originalPath = gridPath;
             SetStartingCell(startingCellPathIndex);
-            //MaximumConsecutiveTurns = StringPathQuery.MaximumConsecutiveStraights(TurtlePath);
-            //MaximumConsecutiveStraights = StringPathQuery.MaximumConsecutiveTurns(TurtlePath);
         }
 
         /// <summary>
@@ -70,8 +45,6 @@ namespace CrawfisSoftware.Collections.Path
                 loopCellIndices.Add(_originalPath[index]);
                 index++;
             }
-            //if (index >= _originalPath.Count) index = 0;
-            //loopCellIndices.Add(_originalPath[index]);
             Path = new GridPath<N, E>(_originalPath.Grid, loopCellIndices, _originalPath.PathLength, true);
 
             TurtlePath = PathQuery.DetermineTurtleString(Path);
