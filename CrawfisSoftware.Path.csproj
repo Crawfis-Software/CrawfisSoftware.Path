@@ -3,9 +3,9 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
     <Nullable>enable</Nullable>
-    <RootNamespace>CrawfisSoftware.Paths</RootNamespace>
+    <RootNamespace>CrawfisSoftware.Path</RootNamespace>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
-    <DocumentationFile>$(SolutionDir)Documentation\CrawfisSoftware.Paths.xml</DocumentationFile>
+    <DocumentationFile>$(SolutionDir)Documentation\CrawfisSoftware.Path.xml</DocumentationFile>
     <BaseOutputPath>$(SolutionDir)\bin\</BaseOutputPath>
     <AssemblyName>$(MSBuildProjectName)</AssemblyName>
     <AssemblyVersion>1.1.0.0</AssemblyVersion>
