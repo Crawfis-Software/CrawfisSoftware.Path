@@ -1,24 +1,27 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
-    <TargetFramework>netstandard2.1</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RepositoryUrl>https://github.com/Crawfis-Software/CrawfisSoftware.Path</RepositoryUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageIcon>icon.png</PackageIcon>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <Description>Standard library for CrawfisSoftware.Path.</Description>
+    <Company>Crawfis Software</Company>
+    <PackageProjectUrl>https://github.com/Crawfis-Software</PackageProjectUrl>
+    <Copyright>Copyright (c) Crawfis Software 2026</Copyright>
+    <Authors>Crawfis Software</Authors>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <LangVersion>10.0</LangVersion>
+    <RepositoryType>git</RepositoryType>
+    <PackageId>CrawfisSoftware.Path</PackageId>
     <Nullable>enable</Nullable>
-    <RootNamespace>CrawfisSoftware.Path</RootNamespace>
-    <GenerateDocumentationFile>True</GenerateDocumentationFile>
-    <DocumentationFile>$(SolutionDir)Documentation\CrawfisSoftware.Path.xml</DocumentationFile>
-    <BaseOutputPath>$(SolutionDir)\bin\</BaseOutputPath>
-    <AssemblyName>$(MSBuildProjectName)</AssemblyName>
-    <AssemblyVersion>1.1.0.0</AssemblyVersion>
-    <FileVersion>1.1.0.0</FileVersion>
-    <Copyright>2025</Copyright>
+    <TargetFrameworks>netstandard2.1;net8.0</TargetFrameworks>
   </PropertyGroup>
-
   <ItemGroup>
-    <ProjectReference Include="..\Graph\Grid\CrawfisSoftware.Grid.csproj" />
+    <None Include="README.md" Pack="true" PackagePath="\" />
+    <None Include="icon.png" Pack="true" PackagePath="\" />
   </ItemGroup>
-
   <ItemGroup>
-    <Folder Include="BitPattern\" />
+    <PackageReference Include="CrawfisSoftware.Grid" Version="0.1.*" />
   </ItemGroup>
-
 </Project>
