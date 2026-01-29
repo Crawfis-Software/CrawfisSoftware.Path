@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-namespace CrawfisSoftware.Collections.Path
+namespace CrawfisSoftware.Path
 {
     /// <summary>
     /// Data structure to hold a path or loop through a Grid
@@ -14,14 +14,14 @@ namespace CrawfisSoftware.Collections.Path
     {
         private readonly Grid<TNodeValue, TEdgeValue> _grid;
         private readonly List<int> _positions;
-        private readonly float _edgeLength;
+        private readonly float _pathLength;
 
         /// <inheritdoc/>
         public bool IsClosed { get; private set; } = false;
         /// <inheritdoc/>
         public int PositionCount { get { return Count + (IsClosed ? 1 : 0); } }
         /// <inheritdoc/>
-        public float PathLength { get { return _edgeLength; } }
+        public float PathLength { get { return _pathLength; } }
 
         /// <summary>
         /// Get the underlying grid that this path is defined on.
@@ -40,7 +40,9 @@ namespace CrawfisSoftware.Collections.Path
             _grid = grid;
             _positions = new List<int>(positions);
             IsClosed = isClosed;
-            _edgeLength = (pathLength < 0) ? this.Count : pathLength;
+            int numberOfCells = _positions.Count;
+            if(IsClosed) numberOfCells++;
+            _pathLength = (pathLength < 0) ? numberOfCells : pathLength;
         }
 
         #region IReadOnlyList

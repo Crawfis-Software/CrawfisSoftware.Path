@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace CrawfisSoftware.Collections.Path
+namespace CrawfisSoftware.Path
 {
     /// <summary>
     /// Static utility for querying a path or loop as an encoded turtle-based string.

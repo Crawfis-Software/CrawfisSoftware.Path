@@ -2,7 +2,7 @@
 using System;
 using System.Text;
 
-namespace CrawfisSoftware.Collections.Path
+namespace CrawfisSoftware.Path
 {
     /// <summary>
     /// Static class with methods to query an IPath or GridPath.

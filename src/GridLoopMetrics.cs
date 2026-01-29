@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace CrawfisSoftware.Collections.Path
+namespace CrawfisSoftware.Path
 {
     /// <summary>
     /// Data structure to hold loop metrics on a grid.

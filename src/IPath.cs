@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace CrawfisSoftware.Collections.Path
+namespace CrawfisSoftware.Path
 {
     /// <summary>
     /// Defines a path including positions, a path length attribute and a flag indicating whether it is a closed loop or not.
