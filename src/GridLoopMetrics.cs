@@ -48,6 +48,8 @@ namespace CrawfisSoftware.Path
             Path = new GridPath<N, E>(_originalPath.Grid, loopCellIndices, _originalPath.PathLength, true);
 
             TurtlePath = PathQuery.DetermineTurtleString(Path);
+
+            CrossSectionCount = CountCrossSections(Path);
         }
     }
 }

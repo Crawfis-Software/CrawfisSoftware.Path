@@ -27,7 +27,8 @@ namespace CrawfisSoftware.Path
         /// Creates a new loop stitcher for the given <paramref name="grid"/>.
         /// </summary>
         /// <param name="grid">The grid that the resulting <see cref="GridPath{N,E}"/> will reference.</param>
-        public SideWinderLoop(Grid<N,E> grid)
+        /// <param name="startingRow">The starting row for the first column entry (0-based).</param>
+        public SideWinderLoop(Grid<N,E> grid, int startingRow = 0)
         {
             _grid = grid;
             _width = grid.Width;
@@ -38,14 +39,15 @@ namespace CrawfisSoftware.Path
         /// </summary>
         /// <param name="leftColumns">One column index per row (0-based) for the left side.</param>
         /// <param name="rightColumns">One column index per row (0-based) for the right side.</param>
+        /// <param name="startingRow">The starting row for the first column entry (0-based).</param>
         /// <returns>A closed <see cref="GridPath{N,E}"/> representing the stitched loop.</returns>
-        public GridPath<N,E> CreateLoop(IReadOnlyList<int> leftColumns, IReadOnlyList<int> rightColumns)
+        public GridPath<N,E> CreateLoop(IReadOnlyList<int> leftColumns, IReadOnlyList<int> rightColumns, int startingRow = 0)
         {
-            List<int> gridPositions = StitchLoopFromTwoPaths(_width, leftColumns, rightColumns);
+            List<int> gridPositions = StitchLoopFromTwoPaths(_width, startingRow, leftColumns, rightColumns);
             return new GridPath<N, E>(_grid, gridPositions, -1, true);
         }
 
-        private static List<int> StitchLoopFromTwoPaths(int width, IReadOnlyList<int> leftColumns, IReadOnlyList<int> rightColumns)
+        private static List<int> StitchLoopFromTwoPaths(int width, int startingRow, IReadOnlyList<int> leftColumns, IReadOnlyList<int> rightColumns)
         {
             if (leftColumns.Count != rightColumns.Count)
             {
@@ -59,23 +61,34 @@ namespace CrawfisSoftware.Path
             }
 
             int lastRow = rowCount - 1;
+            int topRow = startingRow;
+            int bottomRow = startingRow + lastRow;
 
-            List<int> leftPath = SpanUtilities.StitchPathFromColumns(width, leftColumns);
-            var indices = new List<int>(capacity: leftPath.Count + rowCount * 2);
-            indices.AddRange(leftPath);
+            List<int> indices = SpanUtilities.StitchPathFromColumns(width, startingRow, leftColumns);
 
-            SpanUtilities.AddIndices(indices, SpanUtilities.HorizontalSpan(width, lastRow, leftColumns[lastRow], rightColumns[lastRow]));
-
-            List<int> rightPath = SpanUtilities.StitchPathFromColumns(width, rightColumns);
-            rightPath.Reverse();
-
-            if (rightPath.Count > 0)
+            if (leftColumns[lastRow] != rightColumns[lastRow])
             {
-                rightPath.RemoveAt(0);
+                SpanUtilities.AddIndices(indices, SpanUtilities.HorizontalSpan(width, bottomRow, leftColumns[lastRow], rightColumns[lastRow]));
             }
-            indices.AddRange(rightPath);
 
-            SpanUtilities.AddIndices(indices, SpanUtilities.HorizontalSpan(width, 0, rightColumns[0], leftColumns[0]));
+            List<int> rightPath = SpanUtilities.StitchPathFromColumns(width, startingRow, rightColumns);
+            for (int i = rightPath.Count - 2; i >= 0; i--)
+            {
+                indices.Add(rightPath[i]);
+            }
+
+            if (rightColumns[0] != leftColumns[0])
+            {
+                // Add the top connector back to the left side, but avoid adding the left endpoint.
+                // The GridPath is marked closed, so the final vertex will connect back to the start.
+                foreach (int idx in SpanUtilities.HorizontalSpan(width, topRow, rightColumns[0], leftColumns[0]))
+                {
+                    if (idx != indices[0])
+                    {
+                        indices.Add(idx);
+                    }
+                }
+            }
             return indices;
         }
 

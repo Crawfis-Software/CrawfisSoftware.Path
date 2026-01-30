@@ -32,21 +32,28 @@ namespace CrawfisSoftware.Path
         /// <returns>A list of linear indices representing the stitched path.</returns>
         internal static List<int> StitchPathFromColumns(int width, IReadOnlyList<int> columns)
         {
+            return StitchPathFromColumns(width, 0, columns);
+        }
+
+        internal static List<int> StitchPathFromColumns(int width, int startingRow, IReadOnlyList<int> columns)
+        {
             if (columns.Count == 0)
             {
                 return new List<int>();
             }
 
             var indices = new List<int>(capacity: columns.Count * 2);
-            indices.Add(columns[0] + width * 0);
+            indices.Add(columns[0] + width * startingRow);
 
-            for (int row = 1; row < columns.Count; row++)
+            for (int i = 1; i < columns.Count; i++)
             {
-                int previousColumn = columns[row - 1];
-                int currentColumn = columns[row];
+                int previousRow = startingRow + i - 1;
+                int currentRow = startingRow + i;
+                int previousColumn = columns[i - 1];
+                int currentColumn = columns[i];
 
-                AddIndices(indices, VerticalSpan(width, previousColumn, row - 1, row));
-                AddIndices(indices, HorizontalSpan(width, row, previousColumn, currentColumn));
+                AddIndices(indices, VerticalSpan(width, previousColumn, previousRow, currentRow));
+                AddIndices(indices, HorizontalSpan(width, currentRow, previousColumn, currentColumn));
             }
 
             return indices;

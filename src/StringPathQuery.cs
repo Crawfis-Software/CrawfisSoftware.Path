@@ -25,7 +25,7 @@ namespace CrawfisSoftware.Path
         /// <summary>
         /// A character that indicates the path is disconnect here or invalid (defaults to 'X').
         /// </summary>
-        public static char InvalidChar = 'X';
+        public static char InvalidChar = '?';
 
         /// <summary>
         /// Searches the path (expressed as an input string) for the regular expression and returns the starting string index for each instance it encounters.

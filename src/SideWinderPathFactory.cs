@@ -19,7 +19,7 @@ namespace CrawfisSoftware.Path
     /// </item>
     /// </list>
     ///
-    /// Callers can supply a custom <paramref name="pickNextColumn"/> function to control how the
+    /// Callers can supply a custom-selection function to control how the
     /// selected column changes row-to-row.
     /// </remarks>
     public static class SideWinderPathFactory
@@ -83,12 +83,13 @@ namespace CrawfisSoftware.Path
         /// <typeparam name="N">Node payload type.</typeparam>
         /// <typeparam name="E">Edge payload type.</typeparam>
         /// <param name="grid">Grid the resulting path will reference.</param>
+        /// <param name="startingRow">The starting row for the first column entry (0-based).</param>
         /// <param name="columns">One column index per row (0-based).</param>
         /// <returns>A stitched <see cref="GridPath{N,E}"/>.</returns>
-        public static GridPath<N, E> CreatePath<N, E>(Grid<N, E> grid, IReadOnlyList<int> columns)
+        public static GridPath<N, E> CreatePath<N, E>(Grid<N, E> grid, IReadOnlyList<int> columns, int startingRow = 0)
         {
             var builder = new SideWinderPath<N, E>(grid);
-            return builder.CreatePath(columns);
+            return builder.CreatePath(columns, startingRow);
         }
 
         /// <summary>
@@ -97,16 +98,18 @@ namespace CrawfisSoftware.Path
         /// <typeparam name="N">Node payload type.</typeparam>
         /// <typeparam name="E">Edge payload type.</typeparam>
         /// <param name="grid">Grid the resulting path will reference.</param>
+        /// <param name="startingRow">The starting row for the first column entry (0-based).</param>
         /// <param name="startingColumn">The column to use for the first row (row 0).</param>
         /// <param name="endingColumn">The column to force for the last row.</param>
         /// <param name="random">Optional random source; if omitted a new instance is created.</param>
         /// <param name="pickNextColumn">Optional per-row column selection function.</param>
         /// <param name="maxSpanWidth">Maximum horizontal delta used by the default picker.</param>
         /// <returns>A stitched <see cref="GridPath{N,E}"/>.</returns>
-        public static GridPath<N, E> CreatePath<N, E>(Grid<N, E> grid, int startingColumn, int endingColumn, System.Random random = null, Func<int, int, System.Random, int> pickNextColumn = null, int maxSpanWidth = 5)
+        public static GridPath<N, E> CreatePath<N, E>(Grid<N, E> grid, int startingColumn, int endingColumn, int startingRow = 0, System.Random random = null, Func<int, int, System.Random, int> pickNextColumn = null, int maxSpanWidth = 5)
         {
-            IReadOnlyList<int> columns = GenerateColumns(grid.Width, grid.Height, startingColumn, endingColumn, random, pickNextColumn, maxSpanWidth);
-            return CreatePath(grid, columns);
+            int height = grid.Height - startingRow;
+            IReadOnlyList<int> columns = GenerateColumns(grid.Width, height, startingColumn, endingColumn, random, pickNextColumn, maxSpanWidth);
+            return CreatePath(grid, columns, startingRow);
         }
     }
 }

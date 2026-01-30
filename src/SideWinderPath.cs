@@ -36,10 +36,11 @@ namespace CrawfisSoftware.Path
         /// One column index per row (0-based). The list length controls the number of rows
         /// included in the resulting path; typically this matches <c>grid.Height</c>.
         /// </param>
+        /// <param name="startingRow">The starting row for the first column entry (0-based).</param>
         /// <returns>A <see cref="GridPath{N,E}"/> representing the stitched path.</returns>
-        public GridPath<N, E> CreatePath(IReadOnlyList<int> columns)
+        public GridPath<N, E> CreatePath(IReadOnlyList<int> columns, int startingRow = 0)
         {
-            List<int> gridPositions = SpanUtilities.StitchPathFromColumns(_width, columns);
+            List<int> gridPositions = SpanUtilities.StitchPathFromColumns(_width, startingRow, columns);
             return new GridPath<N, E>(_grid, gridPositions, -1, false);
         }
     }

@@ -118,9 +118,9 @@ namespace CrawfisSoftware.Path
         /// <summary>
         /// Creates a loop by stitching the provided per-row left/right column sequences.
         /// </summary>
-        public static GridPath<N, E> CreateLoop<N, E>(Grid<N, E> grid, IReadOnlyList<int> leftColumns, IReadOnlyList<int> rightColumns)
+        public static GridPath<N, E> CreateLoop<N, E>(Grid<N, E> grid, IReadOnlyList<int> leftColumns, IReadOnlyList<int> rightColumns, int startingRow = 0)
         {
-            var stitcher = new SideWinderLoop<N, E>(grid);
+            var stitcher = new SideWinderLoop<N, E>(grid, startingRow);
             return stitcher.CreateLoop(leftColumns, rightColumns);
         }
 
@@ -131,15 +131,17 @@ namespace CrawfisSoftware.Path
             Grid<N, E> grid,
             int initialLeftColumn,
             int initialRightColumn,
+            int startingRow = 0,
             System.Random random = null,
             Func<int, int, int, System.Random, (int left, int right)> pickNextColumns = null,
             int maxSpanWidth = 5,
             int minVerticalSpan = 1,
             int minLeftToRightSpacing = 1)
         {
+            int height = grid.Height - startingRow;
             (IReadOnlyList<int> leftColumns, IReadOnlyList<int> rightColumns) = GenerateColumns(
                 grid.Width,
-                grid.Height,
+                height,
                 initialLeftColumn,
                 initialRightColumn,
                 random,
@@ -148,7 +150,7 @@ namespace CrawfisSoftware.Path
                 minVerticalSpan,
                 minLeftToRightSpacing);
 
-            return CreateLoop(grid, leftColumns, rightColumns);
+            return CreateLoop(grid, leftColumns, rightColumns, startingRow);
         }
     }
 }
