@@ -184,6 +184,76 @@ This is useful when working with closed loops where the notion of a "start" is a
 
 ---
 
+### `SideWinderPath.cs` — `SideWinderPath<N, E>`
+
+`SideWinderPath<,>` stitches a continuous, grid-aligned (open) path from an explicit per-row column sequence.
+
+- Input: one column index per row (`IReadOnlyList<int> columns`)
+- Output: a `GridPath<N, E>` over the provided `Grid<N, E>`
+
+Primary API:
+
+- `GridPath<N, E> CreatePath(IReadOnlyList<int> columns, int startingRow = 0)`
+
+Notes:
+
+- This type does not generate/randomize the column sequence; it only converts an existing sequence into a path.
+- If you need column-generation helpers, see `SideWinderPathFactory`.
+
+---
+
+### `SideWinderPathFactory.cs` — `SideWinderPathFactory`
+
+`SideWinderPathFactory` provides helpers to generate per-row column sequences and stitch them into a `GridPath<,>`.
+
+Column generation:
+
+- `IReadOnlyList<int> GenerateColumns(int width, int height, int startingColumn, int endingColumn, Random random = null, Func<int, int, Random, int> pickNextColumn = null, int maxSpanWidth = 5)`
+  - Returns one column per row.
+  - Forces `endingColumn` on the last row.
+  - Supports custom per-row selection via `pickNextColumn`.
+
+Stitching helpers:
+
+- `GridPath<N, E> CreatePath<N, E>(Grid<N, E> grid, IReadOnlyList<int> columns, int startingRow = 0)`
+- `GridPath<N, E> CreatePath<N, E>(Grid<N, E> grid, int startingColumn, int endingColumn, int startingRow = 0, Random random = null, Func<int, int, Random, int> pickNextColumn = null, int maxSpanWidth = 5)`
+
+---
+
+### `SideWinderLoop.cs` — `SideWinderLoop<N, E>`
+
+`SideWinderLoop<,>` stitches a closed loop on a grid from two explicit per-row column sequences.
+
+- Inputs: two equal-length column lists (`leftColumns` and `rightColumns`)
+- Output: a closed `GridPath<N, E>` over the provided `Grid<N, E>`
+
+Primary API:
+
+- `GridPath<N, E> CreateLoop(IReadOnlyList<int> leftColumns, IReadOnlyList<int> rightColumns, int startingRow = 0)`
+
+Notes:
+
+- `leftColumns.Count` must equal `rightColumns.Count`.
+- This type does not generate/randomize the left/right sequences; it only stitches them.
+- If you need sequence-generation helpers, see `SideWinderLoopFactory`.
+
+---
+
+### `SideWinderLoopFactory.cs` — `SideWinderLoopFactory`
+
+`SideWinderLoopFactory` provides helpers to generate the per-row left/right column sequences and stitch them into a closed `GridPath<,>`.
+
+Column generation:
+
+- `(IReadOnlyList<int> leftColumns, IReadOnlyList<int> rightColumns) GenerateColumns(int width, int height, int initialLeftColumn, int initialRightColumn, Random random = null, Func<int, int, int, Random, (int left, int right)> pickNextColumns = null, int maxSpanWidth = 5, int minVerticalSpan = 1, int minLeftToRightSpacing = 1)`
+  - Returns two lists with one left/right column per row.
+  - Supports custom selection via `pickNextColumns`.
+
+Stitching helpers:
+
+- `GridPath<N, E> CreateLoop<N, E>(Grid<N, E> grid, IReadOnlyList<int> leftColumns, IReadOnlyList<int> rightColumns, int startingRow = 0)`
+- `GridPath<N, E> CreateLoop<N, E>(Grid<N, E> grid, int initialLeftColumn, int initialRightColumn, int startingRow = 0, Random random = null, Func<int, int, int, Random, (int left, int right)> pickNextColumns = null, int maxSpanWidth = 5, int minVerticalSpan = 1, int minLeftToRightSpacing = 1)`
+
 ## Typical workflow
 
 1. Build a `GridPath<,>` from grid indices.
